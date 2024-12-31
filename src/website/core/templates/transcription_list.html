@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/transcription_list.css' %}" />
+{% endblock %}
+
+{% block title %}
+  Public Transcriptions
+{% endblock %}
+
+{% block content %}
+  <div class="transcription-list-container">
+    <h1>Public Transcriptions</h1>
+    <div class="transcription-list">
+      <ul>
+        {% for transcription_request in transcriptions %}
+          <li class="transcription-item">
+            <div class="transcription-info">
+              <p><strong>Name:</strong> {{ transcription_request.name }}</p>
+              <p><strong>Status:</strong> {{ transcription_request.status }}</p>
+              <p><strong>Visibility:</strong> {{ transcription_request.visibility }}</p>
+              <p><strong>Submitted by:</strong> {{ transcription_request.user.username }}</p>
+            </div>
+            <div class="view-detail-button">
+              <a href="{% url 'transcription-detail' transcription_request.transcription_id  %}">
+                <button>View Detail</button>
+              </a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

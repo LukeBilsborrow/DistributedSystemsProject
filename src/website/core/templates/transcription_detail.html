@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/transcription_detail.css' %}" />
+{% endblock %}
+
+{% block title %}
+  Transcription Detail
+{% endblock %}
+
+{% block content %}
+  <div class="transcription-detail-container">
+    <h1>Transcription Detail</h1>
+    <div class="transcription-info">
+      <p><strong>Name:</strong> {{ transcription_data.name }}</p>
+      <p><strong>Visibility:</strong> {{ transcription_data.visibility }}</p>
+      <p><strong>Status:</strong> {{ transcription_data.status }}</p>
+    </div>
+    <div class="download-button">
+      <a href="{% url 'transcription_result' id=transcription_data.transcription_id  %}" download>
+        <button {% if not transcription_data.status == "completed" %} disabled {% endif %}>Download File (.srt)</button>
+      </a>
+      <a href="/transcription_result/{{transcription_data.transcription_id}}/?format_type=vtt" download>
+        <button {% if not transcription_data.status == "completed" %} disabled {% endif %}>Download File (.vtt)</button>
+      </a>
+    </div>
+  </div>
+{% endblock %}

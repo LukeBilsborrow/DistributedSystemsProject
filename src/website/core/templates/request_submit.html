@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/request_submit.css' %}" />
+{% endblock %}
+
+{% block title %}
+  Request Submission
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Request Submission</h1>
+    <form id="submit-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="visibility">Visibility:</label>
+            <select id="visibility" name="visibility" class="form-control">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="file">Upload File:</label><br/>
+            <input type="file" id="file" name="file_data" class="form-control-file" required>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Submit Request</button>
+    </form>
+
+    <div id="response-message" class="mt-3"></div>
+</div>
+
+<script>
+    function submitForm() {
+        var formData = new FormData(document.getElementById('submit-form'));
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "submit" %}');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    let data = JSON.parse(xhr.responseText);
+                    console.log(data);
+                    let transcription_id = data["transcription_id"]
+                    window.location.href = `/transcription_detail/${transcription_id}`;
+                } else {
+                    document.getElementById('response-message').innerText = "Error: something went wrong.";
+                }
+            }
+        };
+        xhr.send(formData);
+    }
+</script>
+{% endblock %}

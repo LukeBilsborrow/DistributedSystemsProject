@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/user_page.css' %}" />
+{% endblock %}
+
+{% block title %}
+  Profile
+{% endblock %}
+
+{% block content %}
+  <div class="profile-container">
+    <h1>Welcome, {{ username }}!</h1>
+    <div class="user-info">
+      <h2>Your Submissions</h2>
+      <ul class="submission-list">
+        {% for transcription_request in transcription_requests %}
+          <li class="submission-item">
+            <div class="submission-details">
+              <strong>Name:</strong> {{ transcription_request.name }}<br>
+              <strong>Status:</strong> {{ transcription_request.status }}<br>
+              <strong>Visibility:</strong> {{ transcription_request.visibility }}
+            </div>
+            <div class="view-button">
+              <a href="{% url 'transcription-detail' transcription_request.transcription_id  %}">
+                <button>View Detail</button>
+              </a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

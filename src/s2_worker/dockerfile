@@ -1,0 +1,16 @@
+FROM node:21
+WORKDIR /queueService
+RUN apt update
+RUN apt install ffmpeg -y
+RUN apt install python-is-python3 -y
+RUN apt install python3-pip -y
+RUN apt install python3-venv -y
+RUN python3 -m venv venv
+COPY ./python/requirements.txt ./python/requirements.txt
+
+RUN . venv/bin/activate
+RUN venv/bin/pip install -r ./python/requirements.txt
+COPY . .
+WORKDIR /queueService/worker
+RUN npm install
+CMD ["npm", "start"]

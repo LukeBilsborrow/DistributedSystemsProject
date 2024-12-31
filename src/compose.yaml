@@ -1,0 +1,86 @@
+services:
+  backend:
+    network_mode: "host"
+    build:
+      context: "${BACKEND_DIR}"
+
+    environment:
+      - "PYTHONUNBUFFERED=1"
+      - "SECRET_KEY=${SECRET_KEY}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_URL=localhost"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_EXTERNAL_PORT=${REQUESTS_QUEUE_SUBMISSION_SERVER_EXTERNAL_PORT}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT=${REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT}"
+      - "DJANGO_PORT=${DJANGO_PORT}"
+      - "RESULT_OUTPUT_ROOT=${DJANGO_RESULT_ROOT}"
+
+    ports:
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
+
+    volumes:
+      - django_db:/backend
+      - django_files:${DJANGO_RESULT_ROOT}
+    restart: on-failure
+
+  rabbitmq:
+    network_mode: "host"
+    build:
+      context: "${RABBITMQ_DIR}"
+
+    #ports:
+    #  - "${REQUESTS_QUEUE_EXTERNAL_PORT}:${REQUESTS_QUEUE_CONTAINER_PORT}"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+    environment:
+      - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
+
+    restart: on-failure
+
+  s1_queue_sender:
+    network_mode: "host"
+    build:
+      context: "${S1_QUEUE_SENDER_DIR}"
+
+    environment:
+      - "SECRET_KEY=${SECRET_KEY}"
+      - "RABBITMQ_USERNAME=${RABBITMQ_USERNAME}"
+      - "RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}"
+      - "REQUESTS_QUEUE_EXTERNAL_URL=localhost"
+      - "REQUESTS_QUEUE_EXTERNAL_PORT=${REQUESTS_QUEUE_EXTERNAL_PORT}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_EXTERNAL_PORT=${REQUESTS_QUEUE_SUBMISSION_SERVER_EXTERNAL_PORT}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT=${REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT}"
+      - "SUBMISSION_QUEUE_NAME=${SUBMISSION_QUEUE_NAME}"
+
+    restart: always
+
+  s1_queue_reader:
+    network_mode: "host"
+    build:
+      context: "${S1_QUEUE_READER_DIR}"
+
+    environment:
+      - "SECRET_KEY=${SECRET_KEY}"
+      - "RABBITMQ_USERNAME=${RABBITMQ_USERNAME}"
+      - "RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}"
+      - "REQUESTS_QUEUE_EXTERNAL_URL=localhost"
+      - "REQUESTS_QUEUE_EXTERNAL_PORT=${REQUESTS_QUEUE_EXTERNAL_PORT}"
+      - "RESULTS_QUEUE_NAME=${RESULTS_QUEUE_NAME}"
+      - "DJANGO_PORT=${DJANGO_PORT}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT=${REQUESTS_QUEUE_SUBMISSION_SERVER_SUBMISSION_ENDPOINT}"
+      - "REQUESTS_QUEUE_SUBMISSION_SERVER_EXTERNAL_URL=localhost"
+    restart: always
+    healthcheck:
+      test: curl -sS http://127.0.0.1 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 30
+
+volumes:
+  rabbitmq_data:
+    driver: local
+
+  django_db:
+    driver: local
+
+  django_files:
+    driver: local

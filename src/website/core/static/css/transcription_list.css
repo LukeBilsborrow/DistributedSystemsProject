@@ -1,0 +1,43 @@
+.transcription-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.transcription-list {
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.transcription-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.transcription-item {
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.transcription-info p {
+  margin: 0;
+}
+
+.view-detail-button button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.view-detail-button button:hover {
+  background-color: #0056b3;
+}

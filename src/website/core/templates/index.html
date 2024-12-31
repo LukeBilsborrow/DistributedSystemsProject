@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Translation website</h1>
+  <p>Transcribe or translate your videos or audio</p>
+  <div class="central-button">
+    <a href="{% url 'submit' %}">
+      <button>Submit Request</button>
+    </a>
+  </div>
+</div>
+{% endblock %}

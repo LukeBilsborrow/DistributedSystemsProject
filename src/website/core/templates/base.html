@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block css %}
+    
+    {% endblock %}
+
+    <title>{% block title %} Translation service {% endblock %}</title>
+</head>
+<body>
+<nav>
+    <ul class="left-items">
+        <li><a href="{% url 'home' %}">Homepage</a></li>
+    </ul>
+    <ul class="right-items">
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'submit' %}">Submit</a></li>
+            <li>
+                <a href="#" id="logout-btn">Logout</a>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+<main>{% block content %} {% endblock %}</main>
+
+<script>
+    document.getElementById("logout-btn").addEventListener("click", function(event) {
+        event.preventDefault();
+        fetch("/logout/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "{% url 'home' %}";
+            } else {
+                console.error("Logout failed");
+            }
+        })
+        .catch(error => {
+            console.error("Error occurred during logout:", error);
+        });
+    });
+</script>
+
+</body>
+</html>
+

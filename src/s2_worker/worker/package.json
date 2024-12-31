@@ -1,0 +1,13 @@
+{
+  "name": "reader",
+  "version": "1.0.0",
+  "main": "reader.js",
+  "scripts": {
+    "start": "node reader.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "amqplib": "^0.10.3"
+  }
+}
